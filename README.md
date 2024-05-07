@@ -24,24 +24,35 @@ I run an attack on a machine using Atomic Red Team and used Splunk to analyze th
 
 <h2>Walk-through:</h2>
 
-<p align="center">
-Network diagram: <br/>
-<img src="https://i.imgur.com/28tY5Gq.png" height="60%" width="60%" alt="1"/>
+Downloaded Windows 11 development environment for VMWare.  <br/>
+<img src="https://i.imgur.com/xBLjY5p.png" height="80%" width="80%" alt="1"/>
 <br />
+
+Download Ubantu. <br />
+<br />
+<img src="https://i.imgur.com/7gRJHZ9.png" height="80%" width="80%" alt="2"/>
+<br />
+
+Create virtual machine with windows 11. <br />
+<br />
+<img src="https://i.imgur.com/nNYSVko.png" height="80%" width="80%" alt="3"/>
+<br />
+ 
+Create virtual machine with Ubantu.  <br />
+<img src="https://i.imgur.com/v2QQhaq.png" height="80%" width="80%" alt="4"/>
+
+<br />Set a static IP address for this VM so that it doesn’t change throughout the lab. 
+IP address 192.168.11.131  <br />
+Subnet 192.168.11.0/24  <br />
+Gateway 192.168.11.2  <br />
  <br />
-I downloaded and installed VMware with a Windows 10 os for the target system, a Kali Linux os and 2 Windows Server 2019 operating systems for the Active Directory server and Splunk server. Downloaded splunk and installed it into one of the Windows 2019 server vm.<br />
+<img src="https://i.imgur.com/byI9vuH.png" height="80%" width="80%" alt="5"/>
 <br />
-I assigned the ip addresses of each device to reflect my diagram.   <br/>
-<img src="https://i.imgur.com/FTDyEQW.png" height="80%" width="80%" alt="2"/>
-<img src="https://i.imgur.com/P5wvhvA.png" height="80%" width="80%" alt="3"/>
-<br />
- <br />
-I checked connectivity between the servers on the network using ping, it timed out so I turned off the firewall and ping again and it’s connected. <br />
-<img src="https://i.imgur.com/mwQw4nM.png" height="80%" width="80%" alt="4"/>
-<br />I added a second network adapter to the server that will be the domain controller for internet connectivity. <br />
-<img src="https://i.imgur.com/zajx2zd.png" height="80%" width="80%" alt="5"/>
-<br />
- <br />
+
+
+####################
+
+
 I then added a role to server manager and installed active directory domain services to windows server 2019.  <br />
 <img src="https://i.imgur.com/Ko9DKgk.png" height="80%" width="80%" alt="6"/> 
 <img src="https://i.imgur.com/kItqBI5.png" height="80%" width="80%" alt="7"/>
