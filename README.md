@@ -1,11 +1,10 @@
 # SOC-Lab
 
 <h2>Description</h2>
-The puspose of this lab is to create a controlled environment where I can develop, test, and refine detection strategies for identifying threats and security incidents within an Active Directory environment using Splunk. 
+
 <br />
-I'm going to demonstrate how I created a home lab and configured Active directory on a domain controller using vmware. While configuring and running the lab environment I will configure Windows server 2019 to run the following services; DHCP, DNS, Splunk, NAT. 
-<br />
-I run an attack on a machine using Atomic Red Team and used Splunk to analyze the logs. 
+
+<br /> 
 
 <br />
 
@@ -23,25 +22,46 @@ I run an attack on a machine using Atomic Red Team and used Splunk to analyze th
 
 
 <h2>Walk-through:</h2>
+Download and install VMware Workstation. <br/>
+Download and deploy a free Windows VM directly from Microsoft. <br/>
+-Get the “VMWare” version of the workstation. <br/>
+-Once downloaded, unzip the VM and double-click the WinDev####Eval.ovf file to import the VM into VMware.  <br/>
 
-Downloaded Windows 11 development environment for VMWare.  <br/>
 <img src="https://i.imgur.com/xBLjY5p.png" height="80%" width="80%" alt="1"/>
 <br />
 
-Download Ubantu. <br />
+Download and install Ubuntu into a new VM <br />
+ -Download the Ubuntu Server 22.04.1 installer ISO. <br />
+ -Once downloaded, create a new VM in Workstation.  <br />
+ -Use the downloaded ISO as the installer image <br />
+ -Select “Installer update available” <br />
+ -Then “Continue without updating” <br />
 <br />
 <img src="https://i.imgur.com/7gRJHZ9.png" height="80%" width="80%" alt="2"/>
 <br />
-
-Create virtual machine with windows 11. <br />
-<br />
-<img src="https://i.imgur.com/nNYSVko.png" height="80%" width="80%" alt="3"/>
-<br />
- 
+      #######
+              Create virtual machine with windows 11. <br />
+              <br />
+              <img src="https://i.imgur.com/nNYSVko.png" height="80%" width="80%" alt="3"/>
+              <br />
+      #######
+               
 Create virtual machine with Ubantu.  <br />
 <img src="https://i.imgur.com/v2QQhaq.png" height="80%" width="80%" alt="4"/>
 
-<br />Set a static IP address for this VM so that it doesn’t change throughout the lab. 
+<br />Set a static IP address for this VM so that it doesn’t change throughout the lab. <br />
+  a.	Find out the gateway IP of your VMware Workstation NAT network <br />
+  i.	In VMware Workstation, click “Edit” menu <br />
+  ii.	Click “Virtual Network Editor”<br />
+  iii.	Select the “Type: NAT” network<br />
+  iv.	Click “NAT Settings”<br />
+  <br />
+5.	Copy down the “Subnet IP” & “Gateway IP”<br />
+6.	Go back in the Ubuntu installer, change the interface from DHCPv4 to Manual.<br />
+7.	Use same subnet and gateway IP. <br />
+<br />
+
+
 IP address 192.168.11.131  <br />
 Subnet 192.168.11.0/24  <br />
 Gateway 192.168.11.2  <br />
@@ -49,6 +69,7 @@ Gateway 192.168.11.2  <br />
 <img src="https://i.imgur.com/byI9vuH.png" height="80%" width="80%" alt="5"/>
 <br />
 
+8.	Set a username/password
 
 ####################
 
