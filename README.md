@@ -20,8 +20,10 @@ In this project, we utilize a victim machine (the Windows 11 VM) and an attacker
 
 <h2>Walk-through:</h2>
 I download and install VMware Workstation. Then I download Windows 11 dev iso directly from Microsoft and a Ubantu iso and booted up a virtual machine with each of them. For the Ubantu VM I set a static IP address so that it doesn’t change throughout the lab. After setting up the machines I checked connectivity by pinging google.com. 
-<img src="https://i.imgur.com/byI9vuH.png" height="80%" width="80%" alt="5"/>
+<img src="https://i.imgur.com/9WTIUdc.png" height="70%" width="70%" alt="5"/>
 I needed to tuen off Windows Defender so that I can run the executable that I will create without difficulty. For the Windows 11 VM I permanently disabled Windows Defender which will turn itself back on if I didn't do all the following. In order to do this I had to turn off tamper protection, then disable Windows Defender and then boot into safe mode and disable it again, disable Defender via Group Policy Editor, Disable Defender via Registry, now it is off permanently.
+<img src="https://i.imgur.com/Ud4iO8p.png" height="60%" width="60%" alt="5"/>
+<img src="https://i.imgur.com/cwrgz9w.png" height="60%" width="60%" alt="5"/>
 <br/>
 
 <h3>Part 1 - Installing the Defense and Attack software</h3>
@@ -31,15 +33,17 @@ First I signed up for a free account on the LimaCharlie website. After registeri
      Invoke-WebRequest -Uri https://downloads.limacharlie.io/sensor/windows/64 -Outfile C:\Users\User\Downloads\lc_sensor.exe  
 
 LimaCharlie provided a command to copy and paste into the Windows machine for synchronization. 
-I ran the command that I got from LimaCharlie on an administrative command prompt. This allows LimaCharlie to sync their service with my machine. 
-I  went back to LimaCharlie web interface sensors tab to confirm that the sensor synced. 
+I ran the command that I got from LimaCharlie on an administrative command prompt. This allows LimaCharlie to sync their service with my machine. I  went back to LimaCharlie web interface sensors tab to confirm that the sensor synced. 
+<img src="https://i.imgur.com/gJzYj4e.png" height="70%" width="70%" alt="5"/>
+<img src="https://i.imgur.com/fgPsAVR.png" height="70%" width="70%" alt="5"/>
+
 Open Ubantu machine and install Sliver-Server on it. This will  let us create payloads and be our C2 server 
 To download and install Sliver I ran the following command on a root shell:
 
      wget https://github.com/BishopFox/sliver/releases/download/v1.5.34/sliver-server_linux -O /usr/local/bin/sliver-server
      chmod +x /usr/local/bin/sliver-server
      apt install -y mingw-w64
-
+<img src="https://i.imgur.com/KyzUDTD.png" height="70%" width="70%" alt="5"/>
 
 <h3>Part 2 - Payload Generation and Detection</h3>
 
