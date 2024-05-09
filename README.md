@@ -1,7 +1,7 @@
 # SOC-Lab
 
 <h2>Description</h2>
-In this article, I'll discuss a recent project I completed using LimaCharlie EDR and the Sliver adversary emulator. I wanted to complete this project because of Eric Capuano's article titled "So you want to be a SOC Analyst?" (https://blog.ecapuano.com/p/so-you-want-to-be-a-soc-analyst-part), which provides detailed insights. I encourage you to read his article and try a similar project yourself. 
+In this article, I'll discuss a recent project I completed using LimaCharlie EDR and the Sliver adversary emulator. I wanted to complete this project because of Eric Capuano's article titled <a href="https://blog.ecapuano.com/p/so-you-want-to-be-a-soc-analyst-part">"So you want to be a SOC Analyst?"</a> which provides detailed insights. I encourage you to read his article and try a similar project yourself. 
 
 In this project, we utilize a victim machine (the Windows 11 VM) and an attacker machine (the Ubuntu Server VM). The objective is to detect incoming attacks from the Ubuntu machine by deploying LimaCharlie EDR on the Windows machine. The Ubuntu machine will be equipped with the Sliver adversary emulator to function as a C2 server, issuing remote commands to the Windows machine. Our goal is to create a detection rule in LimaCharlie that identifies an attack and then simulate another attack to try to block it. 
 <br />
@@ -53,7 +53,11 @@ After installing Sliver, I then generate the required payload to be delivered to
    
 I opened to the Windows machine and opened an administrative PowerShell so that I’m able to get the executable I created using Sliver from the python web server I just created. On the Ubantu machine I started Sliver then ran the command “http” to start the http listener to see http connection between the devices once established. On the Windows VM, I opened the executable "PRESIDENTIAL_FUNNY.exe". Now we can see the connection. Run command “sessions” which will show information about the sessions available. Then I used the command “use a3ce8c40" which is the session id that we got from the previous command to activate the session which will start a C2 session. To confirm the connection I ran “netstat” command from the Sliver session and looked for the payload which is highlighted in green because it’s associated with Sliver.
 
-I went to LimaCharlie to analyze the telemetry. From the menu I went to “sensors”then selected my Windows machine. Now I can see all the telemetry from this device that is available. 
+<img src="https://i.imgur.com/blQLmMu.png" height="70%" width="70%" alt="5"/>
+<img src="https://i.imgur.com/yQmJO8F.png" height="70%" width="70%" alt="5"/>
+
+
+I opened LimaCharlie to analyze the telemetry. From the menu I went to “sensors”then selected my Windows machine. Now I can see all the telemetry from this device that is available. 
 
 <br />
 <br />
