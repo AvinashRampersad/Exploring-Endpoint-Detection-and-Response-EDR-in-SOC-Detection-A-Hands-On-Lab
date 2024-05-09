@@ -1,13 +1,10 @@
 # SOC-Lab
 
 <h2>Description</h2>
+In this article, I'll discuss a recent project I completed using LimaCharlie EDR and the Sliver adversary emulator. I wanted to complete this project because of Eric Capuano's article titled "So you want to be a SOC Analyst?" (https://blog.ecapuano.com/p/so-you-want-to-be-a-soc-analyst-part), which provides detailed insights. I encourage you to read his article and try a similar project yourself. 
 
+In this project, we utilize a victim machine (the Windows 11 VM) and an attacker machine (the Ubuntu Server VM). The objective is to detect incoming attacks from the Ubuntu machine by deploying LimaCharlie EDR on the Windows machine. The Ubuntu machine will be equipped with the Sliver adversary emulator to function as a C2 server, issuing remote commands to the Windows machine. Our goal is to create a detection rule in LimaCharlie that identifies an attack and then simulate another attack to try to block it. 
 <br />
-
-<br /> 
-
-<br />
-
 
 <h2>Tools Used</h2>
 
@@ -22,204 +19,38 @@
 
 
 <h2>Walk-through:</h2>
-Download and install VMware Workstation. <br/>
-Download and deploy a free Windows VM directly from Microsoft. <br/>
--Get the “VMWare” version of the workstation. <br/>
--Once downloaded, unzip the VM and double-click the WinDev####Eval.ovf file to import the VM into VMware.  <br/>
-
-<img src="https://i.imgur.com/xBLjY5p.png" height="80%" width="80%" alt="1"/>
-<br />
-
-Download and install Ubuntu into a new VM <br />
- -Download the Ubuntu Server 22.04.1 installer ISO. <br />
- -Once downloaded, create a new VM in Workstation.  <br />
- -Use the downloaded ISO as the installer image <br />
- -Select “Installer update available” <br />
- -Then “Continue without updating” <br />
-<br />
-<img src="https://i.imgur.com/7gRJHZ9.png" height="80%" width="80%" alt="2"/>
-<br />
-      #######
-              Create virtual machine with windows 11. <br />
-              <br />
-              <img src="https://i.imgur.com/nNYSVko.png" height="80%" width="80%" alt="3"/>
-              <br />
-      #######
-               
-Create virtual machine with Ubantu.  <br />
-<img src="https://i.imgur.com/v2QQhaq.png" height="80%" width="80%" alt="4"/>
-
-<br />Set a static IP address for this VM so that it doesn’t change throughout the lab. <br />
-  a.	Find out the gateway IP of your VMware Workstation NAT network <br />
-  i.	In VMware Workstation, click “Edit” menu <br />
-  ii.	Click “Virtual Network Editor”<br />
-  iii.	Select the “Type: NAT” network<br />
-  iv.	Click “NAT Settings”<br />
-  <br />
-5.	Copy down the “Subnet IP” & “Gateway IP”<br />
-6.	Go back in the Ubuntu installer, change the interface from DHCPv4 to Manual.<br />
-7.	Use same subnet and gateway IP. <br />
-<br />
-
-
-IP address 192.168.11.131  <br />
-Subnet 192.168.11.0/24  <br />
-Gateway 192.168.11.2  <br />
- <br />
+I download and install VMware Workstation. Then I download Windows 11 dev iso directly from Microsoft and a Ubantu iso and booted up a virtual machine with each of them. For the Ubantu VM I set a static IP address so that it doesn’t change throughout the lab. After setting up the machines I checked connectivity by pinging google.com. 
 <img src="https://i.imgur.com/byI9vuH.png" height="80%" width="80%" alt="5"/>
-<br />
+I needed to tuen off Windows Defender so that I can run the executable that I will create without difficulty. For the Windows 11 VM I permanently disabled Windows Defender which will turn itself back on if I didn't do all the following. In order to do this I had to turn off tamper protection, then disable Windows Defender and then boot into safe mode and disable it again, disable Defender via Group Policy Editor, Disable Defender via Registry, now it is off permanently.
+<br/>
 
-8.	Set a username/password
+<h3>Part 1 - Installing the Defense and Attack software</h3>
 
-####################
+First I signed up for a free account on the LimaCharlie website. After registering, I created an organization name which can be anything. Once the organization was set up, I added the Windows machine as a sensor to send telemetry to LimaCharlie. I opened an administrative PowerShell prompt and installed LimaCharlie using the following command:
+
+     Invoke-WebRequest -Uri https://downloads.limacharlie.io/sensor/windows/64 -Outfile C:\Users\User\Downloads\lc_sensor.exe  
+
+LimaCharlie provided a command to copy and paste into the Windows machine for synchronization. 
+I ran the command that I got from LimaCharlie on an administrative command prompt. This allows LimaCharlie to sync their service with my machine. 
+I  went back to LimaCharlie web interface sensors tab to confirm that the sensor synced. 
+Open Ubantu machine and install Sliver-Server on it. This will  let us create payloads and be our C2 server 
+To download and install Sliver I ran the following command on a root shell:
+
+     wget https://github.com/BishopFox/sliver/releases/download/v1.5.34/sliver-server_linux -O /usr/local/bin/sliver-server
+     chmod +x /usr/local/bin/sliver-server
+     apt install -y mingw-w64
 
 
-I then added a role to server manager and installed active directory domain services to windows server 2019.  <br />
-<img src="https://i.imgur.com/Ko9DKgk.png" height="80%" width="80%" alt="6"/> 
-<img src="https://i.imgur.com/kItqBI5.png" height="80%" width="80%" alt="7"/>
- <br />
- <br />
-I configured the domain and restarted the server. <br />
-<img src="https://i.imgur.com/fSrrxUw.png" height="80%" width="80%" alt="8"/>
-<img src="https://i.imgur.com/4Vw4cVS.png" height="80%" width="80%" alt="9"/>
-<br />
- <br />
- I created an organizational unit named “admins” for my administrator account. <br />
-<img src="https://i.imgur.com/u36Xcun.png" height="80%" width="80%" alt="10"/>
-<img src="https://i.imgur.com/pHZJLPz.png" height="80%" width="80%" alt="11"/>
-<br />
- <br />
- Then I added a user to create my account. <br />
-<img src="https://i.imgur.com/3w6VRbs.png" height="80%" width="80%" alt="12"/>
-<img src="https://i.imgur.com/dyCk0mt.png" height="80%" width="80%" alt="13"/>
-<br />
- <br />
- After creating the account I added it to the group of Domain Admins. <br />
-<img src="https://i.imgur.com/y1Fyylj.png" height="80%" width="80%" alt="14"/>
-<br />
- <br />
- Then I add another role to the server for NAT. <br />
-<img src="https://i.imgur.com/JGyiKa2.png" height="80%" width="80%" alt="15"/>
-<img src="https://i.imgur.com/h9irt70.png" height="80%" width="80%" alt="16"/>
-<img src="https://i.imgur.com/srZdzS9.png" height="80%" width="80%" alt="17"/>
-<br />
- <br />
- Then I configured the NAT and choose the NIC with DHCP. <br />
-<img src="https://i.imgur.com/KEu48DE.png" height="80%" width="80%" alt="18"/>
-<img src="https://i.imgur.com/knbnUZS.png" height="80%" width="80%" alt="19"/>
-<img src="https://i.imgur.com/cGcdQaL.png" height="80%" width="80%" alt="20"/>
-<br />
- <br />
-I added a DHCP server to assign IP addresses to other computers in the network. <br />
-<img src="https://i.imgur.com/YOt8ikI.png" height="80%" width="80%" alt="21"/>
-<br />
- <br />
-I configured the DHCP scope to assign IP addresses from a range of 192.168.11.12-100. <br />
-<img src="https://i.imgur.com/YHFV7fM.png" height="80%" width="80%" alt="22"/>
-<img src="https://i.imgur.com/fR4h7nJ.png" height="80%" width="80%" alt="23"/>
-<img src="https://i.imgur.com/P978F8f.png" height="80%" width="80%" alt="24"/>
-<img src="https://i.imgur.com/1yqIyPL.png" height="80%" width="80%" alt="25"/>
-<img src="https://i.imgur.com/Z03ijJj.png" height="80%" width="80%" alt="26"/>
-<img src="https://i.imgur.com/ug8Wmos.png" height="80%" width="80%" alt="27"/>
-<img src="https://i.imgur.com/o7CbYum.png" height="80%" width="80%" alt="28"/>
-<br />
- <br />
- Then I ran a powershell script to add 1000 users in active directory. <br />
-<img src="https://i.imgur.com/xqjlQEV.png" height="80%" width="80%" alt="29"/>
-<img src="https://i.imgur.com/4XBrJUs.png" height="80%" width="80%" alt="30"/>
-<br />
- <br />
-Next I put my windows 10 device on the same network as the server to get internet access through the domain controller’s internal NIC to the external NIC. <br />
-<img src="https://i.imgur.com/pPgal9f.png" height="80%" width="80%" alt="31"/>
-<img src="https://i.imgur.com/rP8Oo4H.png" height="80%" width="80%" alt="32"/>
-<br />
- <br />
- I installed splunk on the other windows server 2019. <br />
-<img src="https://i.imgur.com/UfUTE4j.png" height="80%" width="80%" alt="33"/>
-<br />
- <br />
-I added the splunk server to the homelab domain. <br />
-<img src="https://i.imgur.com/f0iNHCk.png" height="80%" width="80%" alt="34"/>
-<br />
- <br />
- I then created a splunk admin account and added it to members of domain admins and domain user. <br />
-<img src="https://i.imgur.com/54S3jZ7.png" height="80%" width="80%" alt="35"/>
-<br />
- <br />
- I added another hard drive for Splunk logs and I put it online, named it SplunkLogs and formatted it for Splunk. <br />
-<img src="https://i.imgur.com/7Ti2OPJ.png" height="80%" width="80%" alt="36"/>
-<img src="https://i.imgur.com/xGEWoIC.png" height="80%" width="80%" alt="37"/>
-<img src="https://i.imgur.com/eQ7M3ep.png" height="80%" width="80%" alt="38"/>
-<br />
- <br />
-I downloaded Microsoft edge to be able to use splunk because it would not work on internet explorer. <br />
-<img src="https://i.imgur.com/2sfeEIr.png" height="80%" width="80%" alt="39"/>
-<br />
- <br />
-I downloaded Splunk universal forwarder and copied it to the domain controller and windows 10 machine. <br />
- <img src="https://i.imgur.com/O73GBdH.png" height="80%" width="80%" alt="40"/>
- <br />
- <br />
-Then I copied the Splunk universal forwarder and splunk add on for windows into the splunk server machine. <br />
-<img src="https://i.imgur.com/6OfLPt5.png" height="80%" width="80%" alt="40"/>
-<br />
- <br />
-  I installed splunk universal forwarder on the domain server and windows 10 device. <br />
-<img src="https://i.imgur.com/R2oPtmY.png" height="80%" width="80%" alt="41"/>
-<br />
- <br />
- I copied the extracted splunk universal forwarder file into the splunk program files. <br />
-<img src="https://i.imgur.com/tbJyhyr.png" height="80%" width="80%" alt="42"/>
-<br />
- <br />
-I edit the input file to enable system logs. <br />
-<img src="https://i.imgur.com/ipTJB7U.png" height="80%" width="80%" alt="43"/>
-<br />
- <br />
-  I installed splunk add on to my splunk application. <br />
-<img src="https://i.imgur.com/RuUO7fm.png" height="80%" width="80%" alt="44"/>
-<br />
- <br />
-Then I configured the receiving port to add 9997. Now the splunk server will be getting logs forwarded from the devices on the network. <br />
-<img src="https://i.imgur.com/2MSQ75o.png" height="80%" width="80%" alt="45"/>
- <br />
- <br />
- On my windows machine I install Atomic Red Team. <br />
-<img src="https://i.imgur.com/qoLP2Wk.png" height="80%" width="80%" alt="46"/>
-<br />
- <br />
-I add an exception to windows defender so it wouldn’t remove any of the Atomic Red Team files when I install it. First I add an exception to the C:\ drive and once it’s installed I add the C:\AtomicRedTeam exception and remove the C:\ exception. <br />
-<img src="https://i.imgur.com/BkLZ4N5.png" height="80%" width="80%" alt="47"/>
-<img src="https://i.imgur.com/DkFQBw8.png" height="80%" width="80%" alt="48"/>
-<br />
- <br />
-I opened Splunk and ran a search of my Windows 10 device.<br />
-<img src="https://i.imgur.com/2UJl9K2.png" height="80%" width="80%" alt="49"/>
-<br />
- <br />
-I then invoked an attack from atomic red team command that will create a new user, add it to the admin user group, then delete that user. <br />
-<img src="https://i.imgur.com/Krh1COE.png" height="80%" width="80%" alt="50"/>
-<br />
- <br />
-Then I review the splunk log and ran a search for NewLocalUser to narrow down the results to see this specific event. <br />
-<img src="https://i.imgur.com/VWZ7DSn.png" height="80%" width="80%" alt="51"/>
-<br />
- <br />
-This log shows the new account being created. <br />
-<img src="https://i.imgur.com/1xF8I0l.png" height="80%" width="80%" alt="52"/>
-<br />
- <br />
-This log shows the new account being added to the admin user group.  <br />
-<img src="https://i.imgur.com/fnnNZTN.png" height="80%" width="80%" alt="53"/>
-<br />
- <br />
-This log shows the new account being removed from the admin user group.  <br />
-<img src="https://i.imgur.com/e9GgfW7.png" height="80%" width="80%" alt="54"/>
-<br />
- <br />
-This log shows the account being deleted.  <br />
-<img src="https://i.imgur.com/3a5Q8vV.png" height="80%" width="80%" alt="55"/>
-<br />
+<h3>Part 2 - Payload Generation and Detection</h3>
+
+After installing Sliver, I then generate the required payload to be delivered to the Windows machine. I logged in as a root user and then change directory to where Sliver was downloaded. I used the “sliver-server” command to launched Sliver. On Sliver I entered “implants” to see payload generated. On a regular Ubantu change directory to the sliver directory and start up a simple python web server using the command: 
+
+     python3 -m http.server 80        
+   
+I opened to the Windows machine and opened an administrative PowerShell so that I’m able to get the executable I created using Sliver from the python web server I just created. On the Ubantu machine I started Sliver then ran the command “http” to start the http listener to see http connection between the devices once established. On the Windows VM, I opened the executable "PRESIDENTIAL_FUNNY.exe". Now we can see the connection. Run command “sessions” which will show information about the sessions available. Then I used the command “use a3ce8c40" which is the session id that we got from the previous command to activate the session which will start a C2 session. To confirm the connection I ran “netstat” command from the Sliver session and looked for the payload which is highlighted in green because it’s associated with Sliver.
+
+I went to LimaCharlie to analyze the telemetry. From the menu I went to “sensors”then selected my Windows machine. Now I can see all the telemetry from this device that is available. 
+
 <br />
 <br />
 
