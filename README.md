@@ -14,8 +14,8 @@ In this project, we utilize a victim machine (the Windows 11 VM) and an attacker
 
 <h2>Environments Used </h2>
 
-- <b>Windows 11</b> 
-- <b>Ubantu Linux</b> 
+- <b>Windows 11 VM</b> 
+- <b>Ubantu Linux VM</b> 
 
 
 <h2>Walk-through:</h2>
@@ -58,15 +58,22 @@ I opened to the Windows machine and opened an administrative PowerShell so that 
 
 I opened LimaCharlie to analyze the telemetry. From the menu I went to “sensors”then selected my Windows machine. Now I can see all the telemetry from this device that is available. On LimaCharlie I went to the “sensors" tab, I clicked into my windows machine, then I look through the telemetry which is separated into different tabs. I went to the “processes” tab and we can see the executable "PRESIDENTIAL_FUNNY.exe" that we executed is running. Then I went to the ”File System” tab where I can further investigate using the available hash of the file. I uploaded the hash of the file to the built in VirusTotal interface to scan the file to see if it’s malware. Because this executable was just made and not previously identified as malware it came back with no results which is a false negative. 
 
+<img src="https://i.imgur.com/eqeCQr2.png" height="70%" width="70%" alt="5"/>
+<img src="https://i.imgur.com/VOvX5TZ.png" height="70%" width="70%" alt="5"/>
+
 <h3>Part 3 - Lsass and Writing Detection Rules</h3>
 
 I went back to the Sliver session and entered the command “getprivs” so I could see what privileges I have. The specific privilege I was looking for is "SeDebugPrivilege". Next I dump the lsass.exe process from memory which is a common credential stealing technique. This dumps the remote process from memory, and save it on your Sliver C2 server.
 
      procdump -n lsass.exe -s lsass.dmp
 
+<img src="https://i.imgur.com/eSwaXRq.png" height="70%" width="70%" alt="5"/>
+
 This generated more telemetry. It’s time to go back to LimaCharlie and see what was detected. I went to the "Timeline" tab and used the "SENSITIVE_PROCESS_ACCESS" filter, this will find information about the lsass dump attack. 
 
 Now that the process is detected I create a rule for this detection signature by clicking on the box on the top right of the event. I entered the following in the rule: 
+
+<img src="https://i.imgur.com/5NikOBi.png" height="70%" width="70%" alt="5"/>
 
 Detect:
 
@@ -82,11 +89,11 @@ Respond:
 
 Then I hit the “Test Event” button at the bottom to make sure it’s working and saved it as LSASS access. I then ran the same Lsass dump and went to LimaCharlie then to the “Detection” tab. Here we can see that our detection worked and the response was a report was created. 
 
+<img src="https://i.imgur.com/6ZExeYh.png" height="70%" width="70%" alt="5"/>
+
 <h3>Conclusion</h3>
 
-This lab was very practical and not as difficult as it may seem. It gives a realistic scenario of a defender’s and adversary’s interaction. It allowed me to use and explore an Endpoint Detection and Response tool and Sliver adversary emulator. Getting hands on experience with the tools I used in this lab made me more confident using them as I was able to familiarize myself with the steps and processes to perform different tasks. 
-
-
+This lab was very practical and not as difficult as it may seem. It gives a realistic scenario of a defender’s and adversary’s interaction. It allowed me to use and explore an Endpoint Detection and Response tool and Sliver adversary emulator. Getting hands on experience with the tools I used in this lab made me more confident using them as I was able to familiarize myself with the steps and processes to perform different tasks. I did this lab without doing some steps that Eric Capuano did, so if you are interested in completing this lab and want step by step instructions, read Eric Capuano's article titled <a href="https://blog.ecapuano.com/p/so-you-want-to-be-a-soc-analyst-part">"So you want to be a SOC Analyst?"</a> 
 
 <br />
 <br />
