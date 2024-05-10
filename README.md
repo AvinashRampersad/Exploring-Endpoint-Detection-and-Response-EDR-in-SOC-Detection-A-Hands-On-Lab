@@ -1,4 +1,4 @@
-# SOC-Lab
+# Exploring Endpoint Detection and Response (EDR) in SOC Detection: A Hands-On Lab
 
 <h2>Description</h2>
 In this article, I'll discuss a recent project I completed using LimaCharlie EDR and the Sliver adversary emulator. I wanted to complete this project because of Eric Capuano's article titled <a href="https://blog.ecapuano.com/p/so-you-want-to-be-a-soc-analyst-part">"So you want to be a SOC Analyst?"</a> which provides detailed insights. I encourage you to read his article and try a similar project yourself. 
