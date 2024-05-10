@@ -56,8 +56,37 @@ I opened to the Windows machine and opened an administrative PowerShell so that 
 <img src="https://i.imgur.com/blQLmMu.png" height="70%" width="70%" alt="5"/>
 <img src="https://i.imgur.com/yQmJO8F.png" height="70%" width="70%" alt="5"/>
 
+I opened LimaCharlie to analyze the telemetry. From the menu I went to “sensors”then selected my Windows machine. Now I can see all the telemetry from this device that is available. On LimaCharlie I went to the “sensors" tab, I clicked into my windows machine, then I look through the telemetry which is separated into different tabs. I went to the “processes” tab and we can see the executable "PRESIDENTIAL_FUNNY.exe" that we executed is running. Then I went to the ”File System” tab where I can further investigate using the available hash of the file. I uploaded the hash of the file to the built in VirusTotal interface to scan the file to see if it’s malware. Because this executable was just made and not previously identified as malware it came back with no results which is a false negative. 
 
-I opened LimaCharlie to analyze the telemetry. From the menu I went to “sensors”then selected my Windows machine. Now I can see all the telemetry from this device that is available. 
+<h3>Part 3 - Lsass and Writing Detection Rules</h3>
+
+I went back to the Sliver session and entered the command “getprivs” so I could see what privileges I have. The specific privilege I was looking for is "SeDebugPrivilege". Next I dump the lsass.exe process from memory which is a common credential stealing technique. This dumps the remote process from memory, and save it on your Sliver C2 server.
+
+     procdump -n lsass.exe -s lsass.dmp
+
+This generated more telemetry. It’s time to go back to LimaCharlie and see what was detected. I went to the "Timeline" tab and used the "SENSITIVE_PROCESS_ACCESS" filter, this will find information about the lsass dump attack. 
+
+Now that the process is detected I create a rule for this detection signature by clicking on the box on the top right of the event. I entered the following in the rule: 
+
+Detect:
+
+     event: SENSITIVE_PROCESS_ACCESS
+     op: ends with
+     path: event/*/TARGET/FILE_PATH
+     value: lsass.exe
+
+Respond: 
+
+     - action: report
+     name: LSASS access
+
+Then I hit the “Test Event” button at the bottom to make sure it’s working and saved it as LSASS access. I then ran the same Lsass dump and went to LimaCharlie then to the “Detection” tab. Here we can see that our detection worked and the response was a report was created. 
+
+<h3>Conclusion</h3>
+
+This lab was very practical and not as difficult as it may seem. It gives a realistic scenario of a defender’s and adversary’s interaction. It allowed me to use and explore an Endpoint Detection and Response tool and Sliver adversary emulator. Getting hands on experience with the tools I used in this lab made me more confident using them as I was able to familiarize myself with the steps and processes to perform different tasks. 
+
+
 
 <br />
 <br />
