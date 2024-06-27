@@ -1,4 +1,4 @@
-# Exploring Endpoint Detection and Response (EDR) in SOC Detection: A Hands-On Lab
+# Exploring Endpoint Detection and Response (EDR) in SOC Detection
 
 <h2>Description</h2>
 In this article, I'll discuss a recent project I completed using LimaCharlie EDR and the Sliver adversary emulator. I wanted to complete this project because of Eric Capuano's article titled <a href="https://blog.ecapuano.com/p/so-you-want-to-be-a-soc-analyst-part">"So you want to be a SOC Analyst?"</a> which provides detailed insights. I encourage you to read his article and try a similar project yourself. I utilize a victim machine  Windows 11 VM and an attacker machine (Ubuntu Server VM). The objective is to detect incoming attacks from the Ubuntu machine by deploying LimaCharlie EDR on the Windows machine. The Ubuntu machine will be equipped with the Sliver adversary emulator to function as a C2 server, issuing remote commands to the Windows machine. Our goal is to create a detection rule in LimaCharlie that identifies an attack and then simulate another attack to try to block it. 
